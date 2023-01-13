@@ -30,10 +30,10 @@ public class Task1Application {
 		Double totalPrincipal = (double) 0;
 		Double totalInterest = (double) 0;
 		Double monthlyRate = interestRate / 12;
-		final Integer numberOfPayments = loanPeriod*12; // => MONTHS 1*12
+		final Integer numberOfPayments = loanPeriod * 12; // => MONTHS 1*12
 		if (interestType.equals("fixed"))
 		{
-		interest = loanAmount * interestRate; // => TOTAL INTEREST 750
+		interest = loanAmount * interestRate * loanPeriod; // => TOTAL INTEREST 750
 		loanCost = loanAmount + interest;	// => TOTAL COST => 10750
 		monthlyPayment = loanCost / numberOfPayments;
 		monthlyInterest = interest / numberOfPayments;
@@ -48,7 +48,7 @@ public class Task1Application {
 		
 		interest = loanCost - loanAmount;
 		
-		monthlyInterest = ( loanAmount * interestRate ) / numberOfPayments; // => INTEREST PER MONTH
+		monthlyInterest = ( loanAmount * interestRate ) / 12; // => INTEREST PER MONTH
 
 		}
 		
@@ -91,7 +91,7 @@ public class Task1Application {
 				if (!interestType.equals("fixed"))
 				{
 				beginningBalance -= principal;
-				monthlyInterest = (beginningBalance * interestRate) / numberOfPayments;
+				monthlyInterest = (beginningBalance * interestRate) / 12;
 				}
 				
 				principal = monthlyPayment - monthlyInterest;
