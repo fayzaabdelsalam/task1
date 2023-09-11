@@ -32,50 +32,43 @@ public class LoanDetails {
 		Formatter fmt = new Formatter();  
 		fmt.format("%15s %15s %17s %17s\n", "Payment Number","Payment", "Principal" , "Interest" );
 		System.out.println(fmt);
+		
 		for (Long i = (long) 1; i <= ( loanPeriod * 12 ); i++)
 		{
 			Long num[] = { i, Math.round( loanSummary.getMonthlyPayment()),
-					 Math.round( loanSummary.getPrincipal()),
-					 Math.round( loanSummary.getMonthlyInterest())};  
+					 Math.round( loanSummary.getFlatPrincipal()),
+					 Math.round( loanSummary.getFlatInterest())};  
 			Formatter fmt2 = new Formatter();  
 			fmt2.format("%8s %21s %15s %17s\n",(Object[]) num);
 			System.out.println(fmt2);
 		}
 	}
+	
 	public void setReducingRateTable (LoanSummary loanSummary)
 	{
 		Formatter fmt = new Formatter();  
 		fmt.format("%15s %21s %15s %17s %15s %17s\n", "Payment Number", "Beginning Balance",
-				"Payment", "Principal" , "Interest" , "Ending Balance");
+						"Payment", "Principal" , "Interest" , "Ending Balance");
 		System.out.println(fmt);  
 
-		for (Long i = (long) 1; i <= ( loanPeriod * 12 ); i++)
+		for (int i = 1; i <= ( loanPeriod * 12 ); i++)
 		{	
-			if (i != 1)
-			{
-		
-				loanSummary.setBeginningBalance(loanSummary.getBeginningBalance() - loanSummary.getPrincipal());
-				loanSummary.setMonthlyInterest( (loanSummary.getBeginningBalance() * interestRate) / 12 );
-				loanSummary.setPrincipal(loanSummary.getMonthlyPayment() - loanSummary.getMonthlyInterest());
-				loanSummary.setEndingBalance(loanSummary.getBeginningBalance() - loanSummary.getPrincipal());
-			}
-			Long num[] = { i, Math.round( loanSummary.getBeginningBalance()),
-					 Math.round( loanSummary.getMonthlyPayment()),
-					 Math.round( loanSummary.getPrincipal()),
-					 Math.round( loanSummary.getMonthlyInterest()),
-					 Math.round( loanSummary.getEndingBalance())};  
+			loanSummary.recalculate(this);
+			Long num[] = { (long) i, Math.round( loanSummary.getBeginningBalance().get(i-1)),
+					 Math.round( loanSummary.getActualPayment()),
+					 Math.round( loanSummary.getPrincipal().get((i-1))),
+					 Math.round( loanSummary.getMonthlyInterest().get((i-1))),
+					 Math.round( loanSummary.getEndingBalance().get((i-1)))};  
 			Formatter fmt2 = new Formatter();  
 			fmt2.format("%8s %21s %21s %15s %15s %15s\n",(Object[]) num);  
 			System.out.println(fmt2);  		
 		}	
 	}
-
 	
 	public void setAmortizationTable(LoanSummary loanSummary)
 	{
-		loanSummary.setPrincipal(loanSummary.getMonthlyPayment() - loanSummary.getMonthlyInterest());
-		loanSummary.setBeginningBalance(loanAmount); 
-		loanSummary.setEndingBalance(loanAmount - loanSummary.getPrincipal());
+		loanSummary.setMonthlyInterest(loanSummary.calcMonthlyInterest(this));
+
 		if ( interestType.equals("FIXED") || interestType.equals("fixed") )
 		{
 			setFlatRateTable(loanSummary);
@@ -84,8 +77,5 @@ public class LoanDetails {
 		{
 			setReducingRateTable(loanSummary);	
 		}
-
 	}	
-
 }
-
